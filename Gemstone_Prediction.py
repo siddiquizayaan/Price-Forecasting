@@ -302,11 +302,11 @@ def main():
 
     # Load data based on selected gemstone
     if selected_gemstone == 'Gold':
-        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Gold2.xlsx'
+        data_file_path = './Gold2.xlsx'
     elif selected_gemstone == 'Platinum':
-        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Platinum2.xlsx'
+        data_file_path = './Platinum2.xlsx'
     elif selected_gemstone == 'Silver':
-        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Silver2.xlsx'
+        data_file_path = './Silver2.xlsx'
     else:
         st.error('Invalid gemstone selection!')
         return
