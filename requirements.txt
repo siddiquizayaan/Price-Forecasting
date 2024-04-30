@@ -5,3 +5,5 @@ matplotlib
 yfinance
 deap
 PyPortfolioOpt
+google-generativeai
+python-dotenv
