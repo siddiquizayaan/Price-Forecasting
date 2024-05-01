@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
-
+import matplotlib.pyplot as plt
+import seaborn as sns
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
@@ -89,13 +90,13 @@ def predict_evaluate_model(model, x_test, y_test, scaler):
     test_predict = scaler.inverse_transform(model.predict(np.reshape(x_test, (x_test.shape[0], 1, x_test.shape[1]))))
     test_score1=np.sqrt(mean_squared_error(scaler.inverse_transform([y_test])[0], test_predict[:,0]))
     test_score2=mean_absolute_error(scaler.inverse_transform([y_test])[0], test_predict[:,0])
-    return test_predict, test_score1, test_score2
+    return test_predict,test_score1,test_score2
 
 def predict_evaluate_model_ann(model, x_test, y_test, scaler):
     predict_ann = scaler.inverse_transform(model.predict(x_test))
     ann_score1= np.sqrt(mean_squared_error(scaler.inverse_transform([y_test])[0], predict_ann))
     ann_score2=mean_absolute_error(scaler.inverse_transform([y_test])[0], predict_ann)
-    return predict_ann,ann_score1, ann_score2
+    return predict_ann,ann_score1,ann_score2
 # Plot predictions
 def plot_predictions(data, predicted_data, model_name):
     col=['Price']
@@ -293,6 +294,13 @@ def plot_predictions_with_forecast_2(data,  lstm1_forecasted_prices,lstm2_foreca
     st.plotly_chart(fig)
 
 
+def calculate_rmse(y_true, y_pred):
+    return np.sqrt(np.mean((y_true - y_pred) ** 2))
+
+def calculate_mae(y_true, y_pred):
+    return np.mean(np.abs(y_true - y_pred))
+
+
 def main():
     st.title("Gemstone Price Prediction")
 
@@ -302,11 +310,11 @@ def main():
 
     # Load data based on selected gemstone
     if selected_gemstone == 'Gold':
-        data_file_path = './Gold2.xlsx'
+        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Gold2.xlsx'
     elif selected_gemstone == 'Platinum':
-        data_file_path = './Platinum2.xlsx'
+        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Platinum2.xlsx'
     elif selected_gemstone == 'Silver':
-        data_file_path = './Silver2.xlsx'
+        data_file_path = '/Users/zayaanhusainsiddiqui/Desktop/Silver2.xlsx'
     else:
         st.error('Invalid gemstone selection!')
         return
@@ -345,34 +353,49 @@ def main():
         'GRU': 'gru_model',
         'ANN':'ann_model'    
     }
-
+    evaluation_results=[]
     for model_name, model in models.items():
+    
         st.subheader(f"{model_name} Model")
         model_pth = './'+selected_gemstone+models[model_name]+'.h5'
         model = tf.keras.models.load_model(model_pth)
         if model_name=="ANN":
-            predicted, score1a, score1b=predict_evaluate_model_ann(model, x_test, y_test, scaler)
-            st.write(f'Test Score ({model_name} Model): %.2f RMSE' % score1a)
-            st.write(f'Test Score ({model_name} Model): %.2f MAE' % score1b)
+            predicted,score1a, score1b=predict_evaluate_model_ann(model, x_test, y_test, scaler)
+            
             plot_predictions(df1, predicted, f'{model_name} Model')
         else:
-            predicted, score1a, score1b = predict_evaluate_model(model, x_test, y_test, scaler)
-            st.write(f'Test Score ({model_name} Model): %.2f RMSE' % score1a)
-            st.write(f'Test Score ({model_name} Model): %.2f MAE' % score1b)
+            predicted,score1a, score1b= predict_evaluate_model(model, x_test, y_test, scaler)
+            
             plot_predictions(df1, predicted, f'{model_name} Model')
+        evaluation_results.append({
+            'Model': model_name,
+            'RMSE': score1a,
+            'MAE': score1b
+        })
+
+        
+        
+
+    # Create DataFrame for evaluation results
+    evaluation_df = pd.DataFrame(evaluation_results)
+
+    # Display evaluation results in a table
+    st.subheader("Evaluation Results")
+    st.write(evaluation_df)
 
     
     lstm_model1 = tf.keras.models.load_model('./'+selected_gemstone+'lstm_model1'+'.h5')
     lstm_model2=tf.keras.models.load_model('./'+selected_gemstone+'lstm_model2'+'.h5')
     gru_model=tf.keras.models.load_model('./'+selected_gemstone+'gru_model'+'.h5')
 
-#forecasting prices for each model and each day up to 30 days
-    n_days=14
+#forecasting prices for each model and each day up to 14 days
+    n_days = st.number_input('Enter the number of days to forecast', min_value=1, max_value=14, value=7)
     #lstm_forecast1,lstm_forecast2,gru_forecast=calculated_forecasted_price(n_days,x_test,lstm_model1,lstm_model2,gru_model,scaler)
     lstm1_forecasted_prices = predict_prices(lstm_model1,x_test,scaler,n_days)
     lstm2_forecasted_prices = predict_prices(lstm_model2,x_test,scaler,n_days)
     gru_forecasted_prices = predict_prices(gru_model,x_test,scaler,n_days)
     st.subheader("Forecasted Prices of : "+selected_gemstone)
+
 
     # Display forecasted prices
     #plot_predictions_with_forecast(data, lstm_forecast1,lstm_forecast2,gru_forecast)
@@ -385,8 +408,7 @@ def main():
     #    st.write(f"{model_name} Forecast:", prices)
     #for model_name, prices in gru_forecast.items():
     #    st.write(f"{model_name} Forecast:", prices)
-
-
+    
 if __name__ == "__main__":
     main()
 
