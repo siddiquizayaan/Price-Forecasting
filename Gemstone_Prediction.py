@@ -1,16 +1,16 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
+
 import numpy as np
 import tensorflow as tf
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import Dense, LSTM,GRU
-from keras.metrics import RootMeanSquaredError
+
 from sklearn.metrics import mean_squared_error,mean_absolute_error
 from math import sqrt
-from statsmodels.tsa.seasonal import seasonal_decompose
+
 import plotly.graph_objects as go
 # Load data
 @st.cache_data
@@ -388,7 +388,7 @@ def main():
     lstm_model2=tf.keras.models.load_model('./'+selected_gemstone+'lstm_model2'+'.h5')
     gru_model=tf.keras.models.load_model('./'+selected_gemstone+'gru_model'+'.h5')
 
-#forecasting prices for each model and each day up to 14 days
+#forecasting prices for each model and each day up to 30 days
     n_days = st.number_input('Enter the number of days to forecast', min_value=1, max_value=14, value=7)
     #lstm_forecast1,lstm_forecast2,gru_forecast=calculated_forecasted_price(n_days,x_test,lstm_model1,lstm_model2,gru_model,scaler)
     lstm1_forecasted_prices = predict_prices(lstm_model1,x_test,scaler,n_days)
