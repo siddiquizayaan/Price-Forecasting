@@ -337,6 +337,24 @@ def main():
     x_test, y_test = create_sequences(test_data)
 
     df1 = data[training_size + 15+ 1:]
+    #regressor = KerasRegressor(build_fn=create_lstm_model, epochs=50, batch_size=32, verbose=0)
+    #param_grid = {
+    #    'dropout_rate': [0.1, 0.2, 0.3],
+    #    'learning_rate': [0.001, 0.01, 0.1],
+    #    'optimizer': ['adam', 'rmsprop'],
+    #    'look_back': [10, 15, 20],
+     #   'batch_size': [32, 64],
+      #  'epochs': [50, 100],
+      #  'activation': ['relu', 'tanh']
+    #}
+    #grid_search = GridSearchCV(estimator=regressor, param_grid=param_grid, cv=3)
+    #grid_result = grid_search.fit(x_train, y_train)
+
+# Summarize results
+    #best_score = grid_result.best_score_
+    #best_params = grid_result.best_params_
+    #st.write("Best score:", best_score)
+    #st.write("Best parameters:", best_params)
 
     # Train and evaluate models
     #lstm_model1 = train_model('LSTM1', x_train, y_train)
