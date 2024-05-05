@@ -348,10 +348,10 @@ def main():
     #gru_model.save('./'+selected_gemstone+'gru_model.h5')
     #ann_model.save('./'+selected_gemstone+'ann_model.h5')
     models = {
-        'LSTM 1': 'lstm_model1',
-        'LSTM 2': 'lstm_model2',
-        'GRU': 'gru_model',
-        'ANN':'ann_model'    
+        'LSTM 1': 'lstm_model1_final',
+        'LSTM 2': 'lstm_model2_final',
+        'GRU': 'gru_model_final',
+        'ANN':'ann_model_final'    
     }
     evaluation_results=[]
     for model_name, model in models.items():
@@ -384,11 +384,11 @@ def main():
     st.write(evaluation_df)
 
     
-    lstm_model1 = tf.keras.models.load_model('./'+selected_gemstone+'lstm_model1'+'.h5')
-    lstm_model2=tf.keras.models.load_model('./'+selected_gemstone+'lstm_model2'+'.h5')
-    gru_model=tf.keras.models.load_model('./'+selected_gemstone+'gru_model'+'.h5')
+    lstm_model1 = tf.keras.models.load_model('./'+selected_gemstone+'lstm_model1_final'+'.h5')
+    lstm_model2=tf.keras.models.load_model('./'+selected_gemstone+'lstm_model2_final'+'.h5')
+    gru_model=tf.keras.models.load_model('./'+selected_gemstone+'gru_model_final'+'.h5')
 
-#forecasting prices for each model and each day up to 30 days
+#forecasting prices for each model and each day up to 6 months
     n_days = st.number_input('Enter the number of days to forecast', min_value=1, max_value=180, value=14)
     #lstm_forecast1,lstm_forecast2,gru_forecast=calculated_forecasted_price(n_days,x_test,lstm_model1,lstm_model2,gru_model,scaler)
     lstm1_forecasted_prices = predict_prices(lstm_model1,x_test,scaler,n_days)
