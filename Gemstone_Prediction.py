@@ -114,7 +114,7 @@ def plot_predictions(data, predicted_data, model_name):
     fig.update_layout(
         title=model_name,
         xaxis_title='Date',
-        yaxis_title='Price of gemstone'
+        yaxis_title='Price of gemstone (USD/Oz)'
     )
 
     # Display plot using Streamlit
