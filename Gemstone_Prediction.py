@@ -398,7 +398,7 @@ def main():
     evaluation_df = pd.DataFrame(evaluation_results)
 
     # Display evaluation results in a table
-    st.subheader("Evaluation Results of :" + selected_gemstone)
+    st.subheader("Evaluation Results of: "+selected_gemstone)
     st.write(evaluation_df)
 
     
