@@ -57,30 +57,34 @@ def create_sequences(dataset, look_back=15):
     return np.array(dataX), np.array(dataY)
 
 # Train model
-def train_model(model_type, x_train, y_train, epochs=30, batch_size=32,verbose=1):
+def train_model(model_type, x_train, y_train, epochs=50, batch_size=32,verbose=1):
     model = Sequential()
     if model_type == 'LSTM1':
         model.add(LSTM(128, input_shape=(1, 15)))
         model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        optimizer1 = Adam(learning_rate=0.005)
+        model.compile(loss='mean_squared_error', optimizer=optimizer1)
         model.fit(np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1])), y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     elif model_type=='LSTM2':
         model.add(LSTM(128, return_sequences=True, input_shape=(1, 15)))
         model.add(LSTM(64, return_sequences=False))
         model.add(Dense(25))
         model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        optimizer1 = Adam(learning_rate=0.005)
+        model.compile(loss='mean_squared_error', optimizer=optimizer1)
         model.fit(np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1])), y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     elif model_type == 'GRU':
         model.add(GRU(128, input_shape=(1, 15)))
         model.add(Dense(1))
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        optimizer1 = Adam(learning_rate=0.01)
+        model.compile(loss='mean_squared_error', optimizer=optimizer1)
         model.fit(np.reshape(x_train, (x_train.shape[0], 1, x_train.shape[1])), y_train, epochs=epochs, batch_size=batch_size, verbose=0)
     elif model_type=='ANN':
         model.add( Dense(128, activation='relu', input_shape=(15,)))
         model.add(Dense(1, activation='sigmoid'))
-        model.compile(loss='mean_squared_error', optimizer='adam')
-        model.fit(x_train, y_train, epochs=20)
+        optimizer1 = Adam(learning_rate=0.05)
+        model.compile(loss='mean_squared_error', optimizer=optimizer1)
+        model.fit(x_train, y_train, epochs=75)
    
     return model
 
@@ -339,12 +343,12 @@ def main():
     df1 = data[training_size + 15+ 1:]
     #regressor = KerasRegressor(build_fn=create_lstm_model, epochs=50, batch_size=32, verbose=0)
     #param_grid = {
-    #    'dropout_rate': [0.1, 0.2, 0.3],
-    #    'learning_rate': [0.001, 0.01, 0.1],
+    #    'dropout_rate': [0.0,0.1, 0.2, 0.3],
+    #    'learning_rate': [0.001,0.005,0.01,0.05, 0.1],
     #    'optimizer': ['adam', 'rmsprop'],
-    #    'look_back': [10, 15, 20],
-     #   'batch_size': [32, 64],
-      #  'epochs': [50, 100],
+    #    'look_back': [7, 15, 30],
+     #   'batch_size': [32, 64,128],
+      #  'epochs': [50,75,100,150],
       #  'activation': ['relu', 'tanh']
     #}
     #grid_search = GridSearchCV(estimator=regressor, param_grid=param_grid, cv=3)
